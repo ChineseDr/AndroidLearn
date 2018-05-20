@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceScreen android:key="btn_languages"
+        android:title="Language">
+    </PreferenceScreen>
+
+    <PreferenceScreen android:key="btn_Add"
+        android:title="Add">
+    </PreferenceScreen>
+
+    <PreferenceCategory android:key="book_list"
+        android:title="Book List">
+    </PreferenceCategory>
+
+    <CheckBoxPreference android:key="enable"
+        android:title="Enable"></CheckBoxPreference>
+
+    <EditTextPreference android:key="edit"></EditTextPreference>
+
+    <MultiSelectListPreference android:key="m_select"></MultiSelectListPreference>
+</PreferenceScreen>
