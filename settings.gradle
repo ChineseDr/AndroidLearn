@@ -1,1 +1,1 @@
-include ':app', ':weblearn', ':aidlserver', ':aidlclient', ':aidlserver', ':aidlclient', ':providerdemo'
+include ':app', ':weblearn', ':aidlserver', ':aidlclient', ':aidlserver', ':aidlclient', ':providerdemo', ':app'

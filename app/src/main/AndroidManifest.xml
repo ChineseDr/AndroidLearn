@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ray.providerdemo">
+    package="com.ray.app">
 
     <application
         android:allowBackup="true"
@@ -16,19 +16,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Settings">
-            <intent-filter>
-                <action android:name="android.intent.action.Ray" />
-            </intent-filter>
-        </activity>
-
-      <provider
-          android:authorities="providerdemo"
-          android:name=".BookProvider"
-          android:exported="true" >
-
-      </provider>
-
     </application>
 
 </manifest>

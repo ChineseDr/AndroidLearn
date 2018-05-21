@@ -15,7 +15,8 @@
     <CheckBoxPreference android:key="enable"
         android:title="Enable"></CheckBoxPreference>
 
-    <EditTextPreference android:key="edit"></EditTextPreference>
+    <EditTextPreference android:key="edit"
+        android:title="@string/title"></EditTextPreference>
 
     <MultiSelectListPreference android:key="m_select"></MultiSelectListPreference>
 </PreferenceScreen>

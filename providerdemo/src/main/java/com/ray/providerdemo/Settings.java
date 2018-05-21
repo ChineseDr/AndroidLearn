@@ -61,6 +61,10 @@ public class Settings extends PreferenceActivity
         return true;
     }
 
+    private void setEidtPre(){
+        //mEditPre.setNegativeButtonText();
+    }
+
     @Override
     public boolean onPreferenceClick(Preference preference) {
         String key=preference.getKey();

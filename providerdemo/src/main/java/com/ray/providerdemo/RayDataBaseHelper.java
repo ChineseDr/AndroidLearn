@@ -9,6 +9,7 @@ public class RayDataBaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "RayDataBaseHelper";
     static final String DATABASE_NAME="book.db";
     static final String TABLE_BOOK="book";
+    static final String TABLE_CATEGORY="category";
     private Context mContext;
     public static final String CREATE_BOOKS="create table book(id integer primary key autoincrement,"+
             "author text,price real, page integer, name text)";
@@ -30,7 +31,7 @@ public class RayDataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists book");
-        db.execSQL("drop table if exists language");
+        db.execSQL("drop table if exists category");
         onCreate(db);
     }
 }
