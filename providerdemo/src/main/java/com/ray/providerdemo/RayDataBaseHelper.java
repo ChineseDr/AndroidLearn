@@ -11,10 +11,10 @@ public class RayDataBaseHelper extends SQLiteOpenHelper {
     static final String TABLE_BOOK="book";
     static final String TABLE_CATEGORY="category";
     private Context mContext;
-    public static final String CREATE_BOOKS="create table book(id integer primary key autoincrement,"+
+    public static final String CREATE_BOOK="create table book(id integer primary key autoincrement,"+
             "author text,price real, page integer, name text)";
-    public static final String CREATE_LANGUAGE="create table language(id integer primary key autoincrement,"
-            +"name text, users integer)";
+    public static final String CREATE_CATEGORY="create table category(id integer primary key autoincrement,"
+            +"name text, code integer)";
 
     RayDataBaseHelper(Context context,String name,SQLiteDatabase.CursorFactory factory,int version) {
         super(context,name,factory,version);
@@ -23,8 +23,8 @@ public class RayDataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_BOOKS);
-        db.execSQL(CREATE_LANGUAGE);
+        db.execSQL(CREATE_BOOK);
+        db.execSQL(CREATE_CATEGORY);
         Toast.makeText(mContext,TAG+"succeed",Toast.LENGTH_SHORT).show();
     }
 

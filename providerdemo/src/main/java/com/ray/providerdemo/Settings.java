@@ -1,5 +1,6 @@
 package com.ray.providerdemo;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,11 +13,18 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
+import android.text.Layout;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 public class Settings extends PreferenceActivity
         implements Preference.OnPreferenceClickListener,
         DialogInterface.OnClickListener {
+
+    public static boolean isProvder=false;
 
     public static final String LANG_KEY="btn_languages";
     public static final String ADD_KEY="btn_Add";
@@ -41,6 +49,16 @@ public class Settings extends PreferenceActivity
         initPreference();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return super.onContextItemSelected(item);
+    }
+
     private void initPreference(){
         mLangPre= (PreferenceScreen) findPreference("btn_languages");
         mAddPre= (PreferenceScreen) findPreference("btn_Add");
@@ -61,8 +79,39 @@ public class Settings extends PreferenceActivity
         return true;
     }
 
-    private void setEidtPre(){
-        //mEditPre.setNegativeButtonText();
+    private void setAddBookDialog(){
+        //取得布局服务（LayoutInflater）实例
+        LayoutInflater inflater=LayoutInflater.from(this);
+        //使用布局服务加载视图
+        final View view=inflater.inflate(R.layout.add_book,null);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setView(view);
+
+
+
+    }
+
+    private void showEditeDialog(){
+
+    }
+
+    private boolean insertToDatabase(Book newBook){
+        if (newBook==null){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean deleteFromDatabase(){
+        return true;
+    }
+
+    private boolean updateToDatabase(Book newBook,Book oldBook){
+        return true;
+    }
+
+    private boolean queryFromDatebase(){
+        return true;
     }
 
     @Override

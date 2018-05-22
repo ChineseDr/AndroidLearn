@@ -22,12 +22,13 @@ import android.support.annotation.Nullable;
  *        *匹配任意长度
  */
 public class BookProvider extends ContentProvider {
-    private static final int TABLE_DIR=0;
-    private static final int TABLE_ITEM=1;
+    private static final int BOOK_DIR=0;
+    private static final int BOOK_ITEM=1;
     private static final int CATEGORY_DIR=2;
     private static final int CATEGORY_ITEM=3;
 
     private static final String BOOK_LIST_TYPE="vnd.providerdemo";
+    private static final String CATEGORY_LIST_TYPE="";
     private static final String PACK="com.ray.providerdemo";
     private static UriMatcher uriMatcher;
     RayDataBaseHelper dataBaseHelper;
@@ -38,8 +39,8 @@ public class BookProvider extends ContentProvider {
      */
     static {
         uriMatcher=new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PACK,"book",TABLE_DIR);
-        uriMatcher.addURI(PACK,"book/#",TABLE_ITEM);
+        uriMatcher.addURI(PACK,"book",BOOK_DIR);
+        uriMatcher.addURI(PACK,"book/#",BOOK_ITEM);
         uriMatcher.addURI(PACK,"category",CATEGORY_DIR);
         uriMatcher.addURI(PACK,"category/#",CATEGORY_ITEM);
     }
@@ -64,11 +65,11 @@ public class BookProvider extends ContentProvider {
         SQLiteDatabase db=dataBaseHelper.getReadableDatabase();
         Cursor cursor=null;
         switch(uriMatcher.match(uri)){
-            case TABLE_DIR:
+            case BOOK_DIR:
                 //查询表中所有数据
 
                 break;
-            case TABLE_ITEM:
+            case BOOK_ITEM:
                 //查询表中某条数据
                 break;
             case CATEGORY_DIR:
@@ -89,12 +90,31 @@ public class BookProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
+        switch (uriMatcher.match(uri)){
+            case BOOK_DIR:
+
+                break;
+            case BOOK_ITEM:
+
+                break;
+            case CATEGORY_DIR:
+
+                break;
+            case CATEGORY_ITEM:
+
+                break;
+        }
         return null;
     }
 
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+        switch (uriMatcher.match(uri)){
+            case BOOK_DIR:
+
+                break;
+        }
         return null;
     }
 
