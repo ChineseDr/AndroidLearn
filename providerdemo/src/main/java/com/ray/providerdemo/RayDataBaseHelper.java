@@ -8,17 +8,22 @@ import android.widget.Toast;
 public class RayDataBaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "RayDataBaseHelper";
     static final String DATABASE_NAME="book.db";
-    static final String TABLE_BOOK="book";
-    static final String TABLE_CATEGORY="category";
+    public static final String TABLE_BOOK="book";
+    public static final String TABLE_CATEGORY="category";
     private Context mContext;
-    public static final String CREATE_BOOK="create table book(id integer primary key autoincrement,"+
-            "author text,price real, page integer, name text)";
-    public static final String CREATE_CATEGORY="create table category(id integer primary key autoincrement,"
+    public static final String CREATE_BOOK="create table book(_id integer primary key autoincrement,"+
+            "author text,price integer, page integer, name text)";
+    public static final String CREATE_CATEGORY="create table category(_id integer primary key autoincrement,"
             +"name text, code integer)";
 
     RayDataBaseHelper(Context context,String name,SQLiteDatabase.CursorFactory factory,int version) {
         super(context,name,factory,version);
         mContext=context;
+    }
+
+    public RayDataBaseHelper(Context context) {
+        super(context, DATABASE_NAME, null,1);
+        mContext = context;
     }
 
     @Override
