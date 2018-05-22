@@ -8,9 +8,14 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/AnimationLib" />
             <option value="$PROJECT_DIR$/aidlclient" />
             <option value="$PROJECT_DIR$/aidlserver" />
+            <option value="$PROJECT_DIR$/annotationlib" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/compilerlib" />
+            <option value="$PROJECT_DIR$/corelib" />
+            <option value="$PROJECT_DIR$/eclib" />
             <option value="$PROJECT_DIR$/iMall" />
             <option value="$PROJECT_DIR$/providerdemo" />
             <option value="$PROJECT_DIR$/weblearn" />
