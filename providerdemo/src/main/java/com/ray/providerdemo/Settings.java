@@ -3,7 +3,9 @@ package com.ray.providerdemo;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +18,10 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
+import android.text.InputType;
 import android.text.Layout;
+import android.text.method.DialerKeyListener;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -25,10 +30,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Settings extends PreferenceActivity
         implements Preference.OnPreferenceClickListener,
         DialogInterface.OnClickListener {
+    private static final String TAG = "Settings";
 
     public static boolean isProvder = false;
 
@@ -56,6 +63,9 @@ public class Settings extends PreferenceActivity
     private MultiSelectListPreference mMSelectPre;
 
     ArrayList<Book> mBookList = new ArrayList<Book>();
+    HashMap<String, Book> mBookMap = new HashMap<String, Book>();
+
+    QueryAsyncTask mQueryTask = null;
 
 
     RayDataBaseHelper dbhelper;
@@ -79,10 +89,22 @@ public class Settings extends PreferenceActivity
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case INITDATA:
-
+                    doQuery();
+                    break;
+                default:
+                    break;
             }
         }
     };
+
+    private void doQuery() {
+        if (mQueryTask != null) {
+            mQueryTask.cancel(true);
+            mQueryTask = null;
+        }
+        mQueryTask = new QueryAsyncTask();
+        mQueryTask.execute();
+    }
 
     private void initData() {
         new Thread(new Runnable() {
@@ -91,6 +113,17 @@ public class Settings extends PreferenceActivity
                 mUIHandler.sendEmptyMessage(INITDATA);
             }
         }).start();
+    }
+
+    private void initMap() {
+        mBookMap = new HashMap<>();
+        for (Book book : mBookList) {
+            if (mQueryTask.isCancelled()){
+                break;
+            }
+            String mapKey=String.valueOf(book.getKeyId());
+            mBookMap.put(mapKey,book);
+        }
     }
 
     @Override
@@ -119,7 +152,12 @@ public class Settings extends PreferenceActivity
         if (isProvder) {
 
         } else {
-            insertToDatabase(book);
+            if (insertToDatabase(book)) {
+                mBookList.add(book);
+                updateBookUIList();
+            } else {
+                Log.d(TAG, "insertBook: Failed!");
+            }
         }
         return true;
     }
@@ -141,15 +179,21 @@ public class Settings extends PreferenceActivity
                 EditText bookName = view.findViewById(R.id.book_name_edit);
                 EditText authorName = view.findViewById(R.id.author_edit);
                 EditText pagesNum = view.findViewById(R.id.pages);
+                pagesNum.setKeyListener(new DialerKeyListener());
+                //设置编辑框输入类型（数字）必须同时设置TYPE_CLASS_NUMBER和TYPE_NUMBER_VARIATION_NORMAL才可生效
+                //pagesNum.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_VARIATION_NORMAL);
                 EditText priceNum = view.findViewById(R.id.price_edit);
+                ///设置编辑框输入类型(小数)必须同时设定才可生效
+                //priceNum.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
                 String name = bookName.getText().toString();
                 String author = authorName.getText().toString();
                 String pages = pagesNum.getText().toString();
                 String price = priceNum.getText().toString();
-                Book book = new Book(name, author, Integer.valueOf(pages), Double.valueOf(price));
-                insertBook(book);
-
+                if ((!"".equals(pages)) && (!"".equals(price))) {
+                    Book book = new Book(name, author, Integer.valueOf(pages), Double.valueOf(price));
+                    insertBook(book);
+                }
             }
         });
         final AlertDialog dialog = builder.create();
@@ -157,7 +201,7 @@ public class Settings extends PreferenceActivity
         dialog.show();
     }
 
-    private void showEditeDialog() {
+    private void showEditeDialog(Book oldBook) {
 
     }
 
@@ -172,32 +216,86 @@ public class Settings extends PreferenceActivity
         values.put("author", newBook.getAuthor());
         values.put("price", newBook.getPrice());
         values.put("page", newBook.getPages());
-        db.insert(RayDataBaseHelper.TABLE_BOOK, null, values);
-        return true;
+        //删除数据库中数据
+        long line = db.insert(RayDataBaseHelper.TABLE_BOOK, null, values);
+        //如果返回-1操作数据库失败
+        if (line == -1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    private boolean deleteFromDatabase() {
-        return true;
+    private boolean deleteFromDatabase(Book book) {
+        SQLiteDatabase db = dbhelper.getWritableDatabase();
+        String where = BOOKNAME + "=" + book.getName();
+        String[] whereArgs = new String[]{book.getName(), book.getAuthor()};
+        //修改数据库
+        long line = db.delete(RayDataBaseHelper.TABLE_BOOK, where, null);
+        if (line == -1) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
 
-    private boolean updateToDatabase(Book newBook, Book oldBook) {
-        return true;
+    private boolean updateToDatabase(Book oldBook, Book newBook) {
+        SQLiteDatabase db = dbhelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        final String name = newBook.getName();
+        final String author = newBook.getAuthor();
+        final int page = newBook.getPages();
+        final double price = newBook.getPrice();
+        values.put(BOOKNAME, name);
+        values.put(AUTHOR, newBook.getAuthor());
+        values.put(PAGE, Integer.valueOf(newBook.getPages()));
+        values.put(PRICE, Double.valueOf(newBook.getPrice()));
+        String where = KEYID + "=" + oldBook.getKeyId();
+        long line = db.update(RayDataBaseHelper.TABLE_BOOK, values, where, null);
+        if (line == -1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
+    /**
+     * query至少接收7个参数：第一个参数：表名；第二个参数：指定要查询的列
+     * 第三个参数：where约束条件，第四个参数：where约束条件站位符的值
+     * 第五个参数：groupBy指定需要group by的列：group by column
+     * 第六个参数：group by后的结果进一步约束：having column=value
+     * 第七个参数：查询结果的排序方式：order by column1，column2
+     *
+     * @return
+     */
     private boolean queryFromDatebase() {
         String[] Projection = new String[]{KEYID, AUTHOR, PRICE, PAGE, BOOKNAME};
+        SQLiteDatabase db = dbhelper.getReadableDatabase();
+        //查询数据库中的数据，参数全部传入null表示查询整张表
+        Cursor cursor = db.query(RayDataBaseHelper.TABLE_BOOK, null,
+                null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            Book book = new Book();
+            book.setKeyId(cursor.getInt(0));
+            book.setName(cursor.getString(4));
+            book.setAuthor(cursor.getString(1));
+            book.setPages(cursor.getInt(3));
+            book.setPrice(cursor.getDouble(2));
+            mBookList.add(book);
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
         return true;
     }
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
         String key = preference.getKey();
-        if (LANG_KEY.equals(key)) {
-//            dbhelper = new RayDataBaseHelper(this, "books.db", null, 1);
-//            dbhelper.getWritableDatabase();
-        } else if (ADD_KEY.equals(key)) {
-//            dbhelper=new RayDataBaseHelper(this,"book.db",null,1);
-//            dbhelper.getWritableDatabase();
+        if (preference.equals(mLangPre)) {
+
+        } else if (preference.equals(mAddPre)) {
             showAddBookDialog();
         }
         return false;
@@ -207,11 +305,26 @@ public class Settings extends PreferenceActivity
 
     }
 
-    private void updateBookUIList(Book books) {
+    private void updateBookUIList() {
         mListPre.removeAll();
-        Preference book = new Preference(this);
-        String title = books.getName() + ": " + books.getAuthor();
-        book.setTitle(title);
+        for (final Book book : mBookList) {
+            Log.d(TAG, "updateBookUIList: " + book.getName());
+            Preference bookPre = new Preference(this);
+            String title = book.getName() + ": " + book.getAuthor();
+            //设置Preference标题（第一行）
+            bookPre.setTitle(title);
+            //设置Preference内容（第二行）
+            bookPre.setSummary(String.valueOf(book.getPrice()));
+            bookPre.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    showEditeDialog(book);
+                    return true;
+                }
+            });
+            mListPre.addPreference(bookPre);
+        }
+
     }
 
     @Override
@@ -224,7 +337,7 @@ public class Settings extends PreferenceActivity
      * 2.excute方法必须在UI线程中调用
      * 3.其他方法不要手动调用，由系统自动调用
      */
-    private class QuertAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class QueryAsyncTask extends AsyncTask<Void, Void, Void> {
 
         /**
          * 在耗时操作前执行，一般做些初始化
@@ -232,6 +345,10 @@ public class Settings extends PreferenceActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+//            if (mQueryTask!=null){
+//                mQueryTask.cancel(true);
+//                mQueryTask=null;
+//            }
         }
 
         /**
@@ -243,7 +360,12 @@ public class Settings extends PreferenceActivity
          */
         @Override
         protected Void doInBackground(Void... voids) {
-            publishProgress();//更新任务进度
+            //publishProgress();//更新任务进度
+            if (queryFromDatebase()) {
+                initData();
+                initMap();
+                updateBookUIList();
+            }
             return null;
         }
 
@@ -254,6 +376,7 @@ public class Settings extends PreferenceActivity
          */
         @Override
         protected void onPostExecute(Void aVoid) {
+            updateBookUIList();
             super.onPostExecute(aVoid);
         }
 
