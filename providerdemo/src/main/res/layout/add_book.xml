@@ -66,6 +66,8 @@
                 android:id="@+id/pages"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="5"
                 android:layout_weight="1"/>
 
 
@@ -88,6 +90,8 @@
                 android:id="@+id/price_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLength="5"
+                android:inputType="number|numberDecimal"
                 android:layout_weight="1"/>
 
         </LinearLayout>

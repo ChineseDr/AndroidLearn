@@ -16,7 +16,14 @@
         android:key="edit"
         android:title="@string/title"></EditTextPreference>
 
-    <MultiSelectListPreference android:key="m_select"></MultiSelectListPreference>
+    <MultiSelectListPreference android:key="m_select"
+        android:title="Please score for this book"
+        android:summary="评价"
+        android:entries="@array/score"
+        android:entryValues="@array/score_values"
+        android:dialogTitle="请评分">
+
+    </MultiSelectListPreference>
 
     <PreferenceCategory
         android:key="book_list"

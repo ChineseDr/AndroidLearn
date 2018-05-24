@@ -3,4 +3,19 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="title">discount</string>
+    
+    <string-array name="score">
+        <item>1分</item>
+        <item>2分</item>
+        <item>3分</item>
+        <item>4分</item>
+        <item>5分</item>
+    </string-array>
+    <string-array name="score_values">
+        <item>true</item>
+        <item>true</item>
+        <item>true</item>
+        <item>true</item>
+        <item>true</item>
+    </string-array>
 </resources>

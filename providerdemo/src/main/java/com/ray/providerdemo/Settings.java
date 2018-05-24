@@ -18,14 +18,17 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.Layout;
+import android.text.TextWatcher;
 import android.text.method.DialerKeyListener;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -38,6 +41,12 @@ public class Settings extends PreferenceActivity
     private static final String TAG = "Settings";
 
     public static boolean isProvder = false;
+
+    private static final int MENU_DELET = 11;
+    private static final int MENU_EDIT = 12;
+    private static final int MENU_READING = 13;
+    private static final int MENU_READ = 14;
+
 
     public static final String LANG_KEY = "btn_languages";
     public static final String ADD_KEY = "btn_Add";
@@ -76,6 +85,7 @@ public class Settings extends PreferenceActivity
         addPreferencesFromResource(R.xml.seetings);
         dbhelper = new RayDataBaseHelper(this);
         initPreference();
+        registerForContextMenu(this.getListView());
     }
 
     @Override
@@ -116,23 +126,55 @@ public class Settings extends PreferenceActivity
     }
 
     private void initMap() {
-        mBookMap = new HashMap<>();
+        mBookMap = new HashMap<String, Book>();
         for (Book book : mBookList) {
-            if (mQueryTask.isCancelled()){
+            if (mQueryTask.isCancelled()) {
                 break;
             }
-            String mapKey=String.valueOf(book.getKeyId());
-            mBookMap.put(mapKey,book);
+            String mapKey = String.valueOf(book.getKeyId());
+            mBookMap.put(mapKey, book);
         }
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        if (info == null) {
+            Log.d(TAG, "onCreateContextMenu: is null");
+            return;
+        }
+        //控件在全部空间中的位置，从0开始算起
+        int position = info.position;
+        if (position >= 6) {
+
+            Log.d(TAG, "onCreateContextMenu: position " + position + " list length " + mBookList.size());
+            int index = position - 6;
+            Book book = mBookList.get(index);
+            String bookName = book.getName();
+            menu.setHeaderTitle(bookName);
+            menu.add(3, MENU_READ, 0, "READ");
+            menu.add(2, MENU_READING, 0, "Reading");
+            menu.add(1, MENU_EDIT, 0, "Edit");
+            menu.add(0, MENU_DELET, 0, "Delete");
+        }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int index=info.position-6;
+        Book book=mBookList.get(index);
+        switch (item.getItemId()) {
+            case MENU_DELET:
+                deleteBook(book);
+                break;
+            case MENU_EDIT:
+                showEditeDialog(book);
+                break;
+            default:
+                break;
+        }
         return super.onContextItemSelected(item);
     }
 
@@ -162,6 +204,21 @@ public class Settings extends PreferenceActivity
         return true;
     }
 
+    private boolean deleteBook(Book book){
+        if (isProvder){
+            return true;
+        }else {
+            if (deleteFromDatabase(book)){
+                mBookList.remove(book);
+                updateBookUIList();
+                return true;
+            }else {
+                return false;
+            }
+        }
+
+    }
+
     private void showAddBookDialog() {
         //取得布局服务（LayoutInflater）实例
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -183,6 +240,22 @@ public class Settings extends PreferenceActivity
                 //设置编辑框输入类型（数字）必须同时设置TYPE_CLASS_NUMBER和TYPE_NUMBER_VARIATION_NORMAL才可生效
                 //pagesNum.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_VARIATION_NORMAL);
                 EditText priceNum = view.findViewById(R.id.price_edit);
+                priceNum.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
                 ///设置编辑框输入类型(小数)必须同时设定才可生效
                 //priceNum.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
@@ -201,8 +274,29 @@ public class Settings extends PreferenceActivity
         dialog.show();
     }
 
-    private void showEditeDialog(Book oldBook) {
+    private void showEditeDialog(final Book oldBook) {
+        LayoutInflater inflater=LayoutInflater.from(this);
+        final View editView=inflater.inflate(R.layout.add_book,null);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
 
+        builder.setView(editView);
+        builder.setTitle("Edit Book");
+        builder.setPositiveButton("修改", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final EditText bookName=editView.findViewById(R.id.book_name_edit);
+                final EditText bookAuthor=editView.findViewById(R.id.author_edit);
+                final EditText bookPage=editView.findViewById(R.id.pages);
+                final EditText bookPrice=editView.findViewById(R.id.price_edit);
+
+                bookName.setText(oldBook.getName());
+                bookAuthor.setText(oldBook.getAuthor());
+                bookPage.setText(String.valueOf(oldBook.getPages()));
+                bookPrice.setText(String.valueOf(oldBook.getPrice()));
+            }
+        });
+        final AlertDialog dialog=builder.create();
+        dialog.show();
     }
 
     private boolean insertToDatabase(Book newBook) {
@@ -228,8 +322,8 @@ public class Settings extends PreferenceActivity
 
     private boolean deleteFromDatabase(Book book) {
         SQLiteDatabase db = dbhelper.getWritableDatabase();
-        String where = BOOKNAME + "=" + book.getName();
-        String[] whereArgs = new String[]{book.getName(), book.getAuthor()};
+        String where = BOOKNAME + "=?" ;
+        String[] whereArgs = new String[]{book.getName()};
         //修改数据库
         long line = db.delete(RayDataBaseHelper.TABLE_BOOK, where, null);
         if (line == -1) {
@@ -278,10 +372,10 @@ public class Settings extends PreferenceActivity
         while (cursor.moveToNext()) {
             Book book = new Book();
             book.setKeyId(cursor.getInt(0));
-            book.setName(cursor.getString(4));
-            book.setAuthor(cursor.getString(1));
+            book.setName(cursor.getString(1));
+            book.setAuthor(cursor.getString(2));
             book.setPages(cursor.getInt(3));
-            book.setPrice(cursor.getDouble(2));
+            book.setPrice(cursor.getDouble(4));
             mBookList.add(book);
         }
         if (cursor != null) {
@@ -297,6 +391,13 @@ public class Settings extends PreferenceActivity
 
         } else if (preference.equals(mAddPre)) {
             showAddBookDialog();
+        }else if (preference.equals(mEnablePre)){
+            Log.d(TAG, "onPreferenceClick: mEnablePre isChecked"+mEnablePre.isChecked());
+            mListPre.setEnabled(mEnablePre.isChecked());
+        }else if (preference.equals(mEditPre)){
+
+        }else if (preference.equals(mMSelectPre)){
+
         }
         return false;
     }
@@ -362,7 +463,6 @@ public class Settings extends PreferenceActivity
         protected Void doInBackground(Void... voids) {
             //publishProgress();//更新任务进度
             if (queryFromDatebase()) {
-                initData();
                 initMap();
                 updateBookUIList();
             }
@@ -393,6 +493,7 @@ public class Settings extends PreferenceActivity
 
         @Override
         protected void onCancelled() {
+            updateUI();
             super.onCancelled();
         }
     }
