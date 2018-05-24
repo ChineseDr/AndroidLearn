@@ -162,9 +162,9 @@ public class Settings extends PreferenceActivity
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int index=info.position-6;
-        Book book=mBookList.get(index);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int index = info.position - 6;
+        Book book = mBookList.get(index);
         switch (item.getItemId()) {
             case MENU_DELET:
                 deleteBook(book);
@@ -204,15 +204,15 @@ public class Settings extends PreferenceActivity
         return true;
     }
 
-    private boolean deleteBook(Book book){
-        if (isProvder){
+    private boolean deleteBook(Book book) {
+        if (isProvder) {
             return true;
-        }else {
-            if (deleteFromDatabase(book)){
+        } else {
+            if (deleteFromDatabase(book)) {
                 mBookList.remove(book);
                 updateBookUIList();
                 return true;
-            }else {
+            } else {
                 return false;
             }
         }
@@ -275,19 +275,30 @@ public class Settings extends PreferenceActivity
     }
 
     private void showEditeDialog(final Book oldBook) {
-        LayoutInflater inflater=LayoutInflater.from(this);
-        final View editView=inflater.inflate(R.layout.add_book,null);
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final View editView = inflater.inflate(R.layout.add_book, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setView(editView);
         builder.setTitle("Edit Book");
+        
+        final EditText bookName = (EditText) editView.findViewById(R.id.book_name_edit);
+        final EditText bookAuthor = (EditText) editView.findViewById(R.id.author_edit);
+        final EditText bookPage = (EditText) editView.findViewById(R.id.pages);
+        final EditText bookPrice = (EditText) editView.findViewById(R.id.price_edit);
+
+        bookName.setText(oldBook.getName());
+        bookAuthor.setText(oldBook.getAuthor());
+        bookPage.setText(String.valueOf(oldBook.getPages()));
+        bookPrice.setText(String.valueOf(oldBook.getPrice()));
+
         builder.setPositiveButton("修改", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                final EditText bookName=editView.findViewById(R.id.book_name_edit);
-                final EditText bookAuthor=editView.findViewById(R.id.author_edit);
-                final EditText bookPage=editView.findViewById(R.id.pages);
-                final EditText bookPrice=editView.findViewById(R.id.price_edit);
+                final EditText bookName = (EditText) editView.findViewById(R.id.book_name_edit);
+                final EditText bookAuthor = (EditText) editView.findViewById(R.id.author_edit);
+                final EditText bookPage = (EditText) editView.findViewById(R.id.pages);
+                final EditText bookPrice = (EditText) editView.findViewById(R.id.price_edit);
 
                 bookName.setText(oldBook.getName());
                 bookAuthor.setText(oldBook.getAuthor());
@@ -295,7 +306,7 @@ public class Settings extends PreferenceActivity
                 bookPrice.setText(String.valueOf(oldBook.getPrice()));
             }
         });
-        final AlertDialog dialog=builder.create();
+        final AlertDialog dialog = builder.create();
         dialog.show();
     }
 
@@ -322,7 +333,7 @@ public class Settings extends PreferenceActivity
 
     private boolean deleteFromDatabase(Book book) {
         SQLiteDatabase db = dbhelper.getWritableDatabase();
-        String where = BOOKNAME + "=?" ;
+        String where = BOOKNAME + "=?";
         String[] whereArgs = new String[]{book.getName()};
         //修改数据库
         long line = db.delete(RayDataBaseHelper.TABLE_BOOK, where, null);
@@ -391,12 +402,12 @@ public class Settings extends PreferenceActivity
 
         } else if (preference.equals(mAddPre)) {
             showAddBookDialog();
-        }else if (preference.equals(mEnablePre)){
-            Log.d(TAG, "onPreferenceClick: mEnablePre isChecked"+mEnablePre.isChecked());
+        } else if (preference.equals(mEnablePre)) {
+            Log.d(TAG, "onPreferenceClick: mEnablePre isChecked" + mEnablePre.isChecked());
             mListPre.setEnabled(mEnablePre.isChecked());
-        }else if (preference.equals(mEditPre)){
+        } else if (preference.equals(mEditPre)) {
 
-        }else if (preference.equals(mMSelectPre)){
+        } else if (preference.equals(mMSelectPre)) {
 
         }
         return false;
