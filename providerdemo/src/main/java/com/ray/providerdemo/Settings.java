@@ -172,6 +172,12 @@ public class Settings extends PreferenceActivity
             case MENU_EDIT:
                 showEditeDialog(book);
                 break;
+            case MENU_READ:
+
+                break;
+            case MENU_READING:
+
+                break;
             default:
                 break;
         }
@@ -281,7 +287,7 @@ public class Settings extends PreferenceActivity
 
         builder.setView(editView);
         builder.setTitle("Edit Book");
-        
+
         final EditText bookName = (EditText) editView.findViewById(R.id.book_name_edit);
         final EditText bookAuthor = (EditText) editView.findViewById(R.id.author_edit);
         final EditText bookPage = (EditText) editView.findViewById(R.id.pages);
