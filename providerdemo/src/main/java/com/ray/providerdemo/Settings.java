@@ -171,6 +171,7 @@ public class Settings extends PreferenceActivity
                 break;
             case MENU_EDIT:
                 showEditeDialog(book);
+                updateBookUIList();
                 break;
             case MENU_READ:
 
@@ -301,15 +302,17 @@ public class Settings extends PreferenceActivity
         builder.setPositiveButton("修改", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                final EditText bookName = (EditText) editView.findViewById(R.id.book_name_edit);
-                final EditText bookAuthor = (EditText) editView.findViewById(R.id.author_edit);
-                final EditText bookPage = (EditText) editView.findViewById(R.id.pages);
-                final EditText bookPrice = (EditText) editView.findViewById(R.id.price_edit);
+                Book newBook=new Book();
+                newBook.setKeyId(oldBook.getKeyId());
+                newBook.setName(bookName.getText().toString());
+                newBook.setAuthor(bookAuthor.getText().toString());
+                newBook.setPages(Integer.valueOf(bookPage.getText().toString()));
+                newBook.setPrice(Double.valueOf(bookPrice.getText().toString()));
 
-                bookName.setText(oldBook.getName());
-                bookAuthor.setText(oldBook.getAuthor());
-                bookPage.setText(String.valueOf(oldBook.getPages()));
-                bookPrice.setText(String.valueOf(oldBook.getPrice()));
+                updateToDatabase(oldBook,newBook);
+
+
+
             }
         });
         final AlertDialog dialog = builder.create();

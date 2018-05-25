@@ -7,7 +7,7 @@ public class Book {
     private String author;
     private double price;
 
-    public Book() {
+    public Book(Book book) {
     }
 
     public Book( String name, String author, int pages, double price) {
@@ -15,6 +15,9 @@ public class Book {
         this.pages = pages;
         this.author = author;
         this.price = price;
+    }
+
+    public Book() {
     }
 
     public Book(int keyId, String name, int pages, String author, double price) {
