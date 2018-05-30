@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">iMall</string>
+    <string name="title_activity_imall">IMallActivity</string>
 </resources>
