@@ -1,4 +1,4 @@
-package com.ray.corelib.proxies;
+package com.ray.corelib.delegates;
 /**
  * 使用Fragmentation库
  * https://github.com/YoKeyword/Fragmentation/wiki
@@ -7,7 +7,6 @@ package com.ray.corelib.proxies;
  * http://jakewharton.github.io/butterknife/
  */
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,9 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import me.yokeyword.fragmentation.ISupportFragment;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import me.yokeyword.fragmentation_swipeback.SwipeBackFragment;
 
-public abstract class BaseProxy extends Fragment implements ISupportFragment {
+public abstract class BaseDelegate extends SwipeBackFragment {
     /*
      * 为了解决getActivity()空指针问题
      * 在Fragment基类里设置一个Activity mActivity的全局变量，
@@ -27,13 +28,18 @@ public abstract class BaseProxy extends Fragment implements ISupportFragment {
      * 但是异步任务没停止的情况下，本身就可能已内存泄漏，相比Crash，这种做法“安全”些），
      *
      */
-    protected FragmentActivity _mActivity=null;
+    protected FragmentActivity _mActivity = null;
+    //声明一个Unbinder，这是butterKnife的一个类型
+    @SuppressWarnings("SpellCheckingInspection")
+    private Unbinder mUnbinder = null;
 
+    //由子类传入布局
     public abstract Object setLayout();
 
+    //视图绑定之后需要进行其他操作，强制子类实现onBindView
     public abstract void onBindView(@Nullable Bundle saveInstanceState, @NonNull View rootView);
 
-    //创建视图
+    //处理传入子类的布局
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,7 +51,23 @@ public abstract class BaseProxy extends Fragment implements ISupportFragment {
         } else {
             throw new ClassCastException("type of setLayout() must be int or View!");
         }
-        onBindView(savedInstanceState,rootView);
+        if (rootView != null) {
+            //绑定fragment与视图
+            mUnbinder= ButterKnife.bind(this,rootView);
+            onBindView(savedInstanceState, rootView);
+        }
         return rootView;
+    }
+
+    /**
+     * 在destroy的时候处理一下Unbinder的情况
+     */
+    @Override
+    public void onDestroy() {
+        if (mUnbinder!=null){
+            //解除绑定
+            mUnbinder.unbind();
+        }
+        super.onDestroy();
     }
 }
