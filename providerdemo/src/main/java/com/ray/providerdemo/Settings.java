@@ -72,7 +72,7 @@ public class Settings extends PreferenceActivity
     private MultiSelectListPreference mMSelectPre;
 
     ArrayList<Book> mBookList = new ArrayList<Book>();
-    HashMap<String, Book> mBookMap = new HashMap<String, Book>();
+    HashMap<String, Book> mBookMap ;
 
     QueryAsyncTask mQueryTask = null;
 
@@ -107,6 +107,16 @@ public class Settings extends PreferenceActivity
         }
     };
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     private void doQuery() {
         if (mQueryTask != null) {
             mQueryTask.cancel(true);
@@ -120,6 +130,7 @@ public class Settings extends PreferenceActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "run: new Thread to send a message start query data");
                 mUIHandler.sendEmptyMessage(INITDATA);
             }
         }).start();
@@ -170,7 +181,7 @@ public class Settings extends PreferenceActivity
                 deleteBook(book);
                 break;
             case MENU_EDIT:
-                showEditeDialog(book);
+                showEditDialog(book);
                 updateBookUIList();
                 break;
             case MENU_READ:
@@ -281,7 +292,7 @@ public class Settings extends PreferenceActivity
         dialog.show();
     }
 
-    private void showEditeDialog(final Book oldBook) {
+    private void showEditDialog(final Book oldBook) {
         LayoutInflater inflater = LayoutInflater.from(this);
         final View editView = inflater.inflate(R.layout.add_book, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -310,6 +321,7 @@ public class Settings extends PreferenceActivity
                 newBook.setPrice(Double.valueOf(bookPrice.getText().toString()));
 
                 updateToDatabase(oldBook,newBook);
+                updateBookUIList();
 
 
 
@@ -361,10 +373,11 @@ public class Settings extends PreferenceActivity
         final String author = newBook.getAuthor();
         final int page = newBook.getPages();
         final double price = newBook.getPrice();
+        values.put(KEYID,oldBook.getKeyId());
         values.put(BOOKNAME, name);
-        values.put(AUTHOR, newBook.getAuthor());
-        values.put(PAGE, Integer.valueOf(newBook.getPages()));
-        values.put(PRICE, Double.valueOf(newBook.getPrice()));
+        values.put(AUTHOR, author/*newBook.getAuthor()*/);
+        values.put(PAGE, Integer.valueOf(page/*newBook.getPages()*/));
+        values.put(PRICE, Double.valueOf(price/*newBook.getPrice()*/));
         String where = KEYID + "=" + oldBook.getKeyId();
         long line = db.update(RayDataBaseHelper.TABLE_BOOK, values, where, null);
         if (line == -1) {
@@ -384,6 +397,7 @@ public class Settings extends PreferenceActivity
      * @return
      */
     private boolean queryFromDatebase() {
+        mBookList.clear();
         String[] Projection = new String[]{KEYID, AUTHOR, PRICE, PAGE, BOOKNAME};
         SQLiteDatabase db = dbhelper.getReadableDatabase();
         //查询数据库中的数据，参数全部传入null表示查询整张表
@@ -439,7 +453,7 @@ public class Settings extends PreferenceActivity
             bookPre.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    showEditeDialog(book);
+                    showEditDialog(book);
                     return true;
                 }
             });

@@ -44,6 +44,12 @@ public class BookProvider extends ContentProvider {
         uriMatcher.addURI(PACK,"category",CATEGORY_DIR);
         uriMatcher.addURI(PACK,"category/#",CATEGORY_ITEM);
     }
+
+    /**
+     * 初始化ContentProvider时调用，通常在这里对数据库进行创建和升级操作
+     * 当ContentResolver尝试访问数据是才会创建provider
+     * @return true创建成功，false失败
+     */
     @Override
     public boolean onCreate() {
         dataBaseHelper=new RayDataBaseHelper(getContext(),"book.db",null,1);
@@ -57,7 +63,7 @@ public class BookProvider extends ContentProvider {
      * @param selection 约束哪些行 sql语句中的“=？“”
      * @param selectionArgs 要查询的 ？的值
      * @param sortOrder 对结果进行排序
-     * @return
+     * @return 查询到的结果保存在Curse对象中
      */
     @Nullable
     @Override
@@ -107,6 +113,13 @@ public class BookProvider extends ContentProvider {
         return null;
     }
 
+
+    /**
+     *
+     * @param uri  确认哪张表，
+     * @param values 待添加的数据保存在ContentResolver中
+     * @return
+     */
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
@@ -118,11 +131,27 @@ public class BookProvider extends ContentProvider {
         return null;
     }
 
+
+    /**
+     *
+     * @param uri 确认哪张表，
+     * @param selection
+     * @param selectionArgs
+     * @return
+     */
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         return 0;
     }
 
+    /**
+     *
+     * @param uri 确认哪张表，
+     * @param values
+     * @param selection
+     * @param selectionArgs
+     * @return
+     */
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         return 0;
