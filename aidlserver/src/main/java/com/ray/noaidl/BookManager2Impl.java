@@ -25,9 +25,11 @@ public class BookManager2Impl extends Binder implements IBookManager2 {
      * Cast an IBinder object into an com.ray.noaidl.IBookManager2 interface,
      * generating a proxy if needed.
      * 把一个IBinder对象转换成IBookManager2接口，如果需要使用内部代理类
-     *
-     * @param obj
-     * @return
+     * aidl机制会在客户端也生成同样的文件，客户端调用asInterface方法是调用的客户端的
+     * 如果客户端有实现了IBookManager2的子类就返回查询到的本地服务
+     * 如果没有则返回Proxy进行远程调用
+     * @param obj  客户端调用传入的Binder对象
+     * @return 服务端实现了IBookManager2接口的服务类对象
      */
     public static IBookManager2 asInterface(IBinder obj) {
         if (obj == null) {
@@ -49,6 +51,16 @@ public class BookManager2Impl extends Binder implements IBookManager2 {
         return this;
     }
 
+    /**
+     * 此方法运行在服务端的Binder线程池中，来处理客户端的远程请求
+     * 客户端发起跨进程请求后，远程请求会被系统封装之后交给此方法中处理
+     * @param code 服务端通过code确认客户端的请求目标方法是哪个
+     * @param data 从data中取出目标方法所需的参数，然后执行目标方法
+     * @param reply 目标方法执行完毕后向reply写入返回值
+     * @param flags
+     * @return 返回值为false，客户端请求失败，可被做为权限控制
+     * @throws RemoteException
+     */
     @Override
     protected boolean onTransact(int code, @NonNull Parcel data, @Nullable Parcel reply, int flags)
             throws RemoteException {
@@ -64,6 +76,7 @@ public class BookManager2Impl extends Binder implements IBookManager2 {
                 } else {
                     arg0 = null;
                 }
+                //运行目标方法，目标方法由子类具体实现（服务中的匿名内部类）
                 this.addBookList(arg0);
                 return true;
             case TRANSACTION_getBookList:
@@ -103,13 +116,24 @@ public class BookManager2Impl extends Binder implements IBookManager2 {
             return DESCRIPTOR;
         }
 
+        /**
+         * 该方法运行在客户端，有客户端调用，
+         * @return
+         * @throws RemoteException
+         */
         @Override
         public List<Book2> getBookList() throws RemoteException {
+            //创建输入型Parcel对象
             Parcel data = Parcel.obtain();
+            //创建输出型Parcel对象
             Parcel reply = Parcel.obtain();
+            //返回的List对象
             List<Book2> result;
             try {
+                //
                 data.writeInterfaceToken(DESCRIPTOR);
+                //调用Binder对象的transact方法发起远程请求（RPC），
+                // 此时服务端的onTransact方法被调用，传入参数
                 mRemote.transact(TRANSACTION_getBookList, data, reply, 0);
                 reply.readException();
                 result = reply.createTypedArrayList(Book2.CREATOR);
@@ -122,25 +146,23 @@ public class BookManager2Impl extends Binder implements IBookManager2 {
 
         @Override
         public void addBookList(Book2 book2) throws Exception {
-            Parcel data=Parcel.obtain();
-            Parcel reply=Parcel.obtain();
+            Parcel data = Parcel.obtain();
+            Parcel reply = Parcel.obtain();
             try {
                 data.writeInterfaceToken(DESCRIPTOR);
-                if (book2!=null){
+                if (book2 != null) {
                     data.writeInt(1);
-                    book2.writeToParcel(data,0);
-                }else {
+                    book2.writeToParcel(data, 0);
+                } else {
                     data.writeInt(0);
                 }
-                mRemote.transact(TRANSACTION_addBookList,data,reply,0);
+                mRemote.transact(TRANSACTION_addBookList, data, reply, 0);
                 reply.readException();
-            }finally {
+            } finally {
                 data.recycle();
                 reply.recycle();
             }
-
         }
-
 
     }
 }
