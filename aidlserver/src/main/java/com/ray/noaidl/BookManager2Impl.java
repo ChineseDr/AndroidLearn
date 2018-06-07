@@ -117,7 +117,7 @@ public class BookManager2Impl extends Binder implements IBookManager2 {
         }
 
         /**
-         * 该方法运行在客户端，有客户端调用，
+         * 该方法运行在客户端，由客户端调用，
          * @return
          * @throws RemoteException
          */
@@ -136,16 +136,19 @@ public class BookManager2Impl extends Binder implements IBookManager2 {
                 // 此时服务端的onTransact方法被调用，传入参数
                 mRemote.transact(TRANSACTION_getBookList, data, reply, 0);
                 reply.readException();
+                //从reply取出远程调用返回的结果
                 result = reply.createTypedArrayList(Book2.CREATOR);
             } finally {
                 reply.recycle();
                 data.recycle();
             }
+            //返回reply
             return result;
         }
 
         @Override
         public void addBookList(Book2 book2) throws Exception {
+            //创建输入输出Parcel
             Parcel data = Parcel.obtain();
             Parcel reply = Parcel.obtain();
             try {
@@ -156,6 +159,7 @@ public class BookManager2Impl extends Binder implements IBookManager2 {
                 } else {
                     data.writeInt(0);
                 }
+                //发起远程调用
                 mRemote.transact(TRANSACTION_addBookList, data, reply, 0);
                 reply.readException();
             } finally {
