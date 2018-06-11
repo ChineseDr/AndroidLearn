@@ -1,6 +1,7 @@
 package com.ray.aidlserver;
 
 import android.content.Context;
+import android.content.Intent;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -12,5 +13,28 @@ public class BinderPool {
 
     private Context mContext;
     private IBinderPool mBinderPool;
-    private CountDownLatch mConnectionBinderCountDownLatch;
+    private static volatile BinderPool sBinderPool;
+    private CountDownLatch mConnectBinderCountDownLatch;
+
+    private BinderPool(Context context) {
+        this.mContext = context.getApplicationContext();
+    }
+
+    public static BinderPool getInsatance(Context context){
+        if (sBinderPool==null){
+            synchronized (BinderPool.class){
+                if (sBinderPool==null){
+                    return new BinderPool(context);
+                }
+            }
+        }
+        return sBinderPool;
+    }
+
+    private synchronized void connectBinderpoolService(){
+        mConnectBinderCountDownLatch=new CountDownLatch(1);
+        //Intent service =new
+    }
+
+
 }
