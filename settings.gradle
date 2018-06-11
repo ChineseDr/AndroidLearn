@@ -1,1 +1,1 @@
-include ':app', ':weblearn', ':aidlserver', ':aidlclient', ':aidlserver', ':aidlclient', ':providerdemo', ':app', ':iMall', ':AnimationLib', ':compilerlib', ':corelib', ':eclib', ':annotationlib'
+include ':app', ':weblearn', ':aidlserver', ':aidlclient', ':aidlserver', ':aidlclient', ':providerdemo', ':app', ':iMall', ':AnimationLib', ':compilerlib', ':corelib', ':eclib', ':annotationlib', ':customview'
