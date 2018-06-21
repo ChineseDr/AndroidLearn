@@ -26,18 +26,18 @@ public class MainActivity extends Activity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Log.d("jdhsj", "run: ");
-//                        try {
-//                            Thread.sleep(10000);
-//                            sendNotification();
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }).start();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("jdhsj", "run: ");
+                        try {
+                            Thread.sleep(10000);
+                            sendNotification();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
 //                sendNotification();
                 Intent intent =new Intent(MainActivity.this,Settings.class);
                 startActivity(intent);
