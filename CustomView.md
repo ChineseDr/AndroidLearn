@@ -1,4 +1,5 @@
 # CircleMenu.java
+```java
 package com.hitomi.cmlibrary;
 
 import android.animation.Animator;
@@ -810,3 +811,4 @@ public class CircleMenu extends View {
         return (int) (dpValue * scale + 0.5f);
     }
 }
+```
