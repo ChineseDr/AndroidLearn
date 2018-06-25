@@ -812,3 +812,35 @@ public class CircleMenu extends View {
     }
 }
 ```
+# OnMenuSelectedListener.java
+```java
+package com.hitomi.cmlibrary;
+
+/**
+ * 点击子菜单项按钮的回调接口
+ *
+ * Created by hitomi on 2016/10/9.
+ */
+public interface OnMenuSelectedListener {
+
+    void onMenuSelected(int index);
+
+}
+```
+# OnMenuStatusChangeListener
+```java
+package com.hitomi.cmlibrary;
+
+/**
+ * 菜单状态发生改变时的回调接口
+ *
+ * Created by hitomi on 2016/10/9.
+ */
+public interface OnMenuStatusChangeListener {
+
+    void onMenuOpened();
+
+    void onMenuClosed();
+
+}
+```
