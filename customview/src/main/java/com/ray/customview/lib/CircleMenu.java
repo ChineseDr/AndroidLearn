@@ -1,6 +1,7 @@
 package com.ray.customview.lib;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -210,4 +211,118 @@ public class CircleMenu extends View {
         return 0;
     }
 
+    /**
+     * 开启打开菜单的动画
+     */
+    private void startOpenMenuAnima(){
+
+    }
+
+    /**
+     * 启动取消的动画
+     */
+    private void startCancelMenuAnima(){
+
+    }
+
+    /**
+     * 启动关闭菜单的动画
+     */
+    private void startCloseMenuAnima(){
+
+    }
+
+    /**
+     * 点击的哪个菜单按钮
+     * @param x
+     * @param y
+     */
+    private void clickWhichRectF(float x, float y){
+
+    }
+
+    /**
+     * 设置主菜单的背景以及打开/关闭图标
+     * @param mainMenuColor
+     * @param openMenuRes Res格式
+     * @param closeMenuRes Res格式
+     * @return
+     */
+    private CircleMenu setMainMenu(int mainMenuColor, int openMenuRes, int closeMenuRes){
+        return this;
+    }
+
+    /**
+     *
+     * @param mainMenuColor
+     * @param openMenuBitmap Bitmap格式
+     * @param closeMenuBitmap Bitmap格式
+     * @return
+     */
+    private CircleMenu setMainMenu(int mainMenuColor, Bitmap openMenuBitmap, Bitmap closeMenuBitmap){
+        return this;
+    }
+
+    /**
+     *
+     * @param mainMenuColor
+     * @param openMenuDrawable Drawable格式
+     * @param closeMenuDrawable Drawable格式
+     * @return
+     */
+    private CircleMenu setMainMenu(int mainMenuColor, Drawable openMenuDrawable, Drawable closeMenuDrawable){
+        return this;
+    }
+
+    /**
+     * 添加一个子菜单，
+     * @param menuColor
+     * @param menuRes 子菜单图标，Resource格式
+     * @return
+     */
+    public CircleMenu addSubMenu(int menuColor, int menuRes){
+        return this;
+    }
+
+    /**
+     *
+     * @param menuColor
+     * @param menuBitmap 子菜单图标，Bitmap 格式
+     * @return
+     */
+    public CircleMenu addSubMenu(int menuColor, Bitmap menuBitmap){
+        return this;
+    }
+
+    /**
+     *
+     * @param menuColor
+     * @param menuDrawable 子菜单图标，Drawable 格式
+     * @return
+     */
+    public CircleMenu addSubMenu(int menuColor, Drawable menuDrawable){
+        return this;
+    }
+
+    /**
+     * 打开菜单
+     */
+    public void openMenu(){
+
+    }
+
+    /**
+     * 关闭菜单
+     */
+    public void closeMenu(){
+
+    }
+
+    /**
+     * 菜单是否打来
+     * @return
+     */
+    public boolean isOpen(){
+        return status==MEUN_STATUS_OPENED;
+    }
 }
