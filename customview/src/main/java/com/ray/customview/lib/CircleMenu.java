@@ -100,8 +100,114 @@ public class CircleMenu extends View {
         super.onDraw(canvas);
     }
 
+    /**
+     * 绘制周围子菜单环绕的圆环路径
+     *
+     * @param canvas
+     */
+    private void drawCirclePatch(Canvas canvas) {
+        if (status == MEUN_STATUS_CLOSE) {
+
+        }
+    }
+
+    /**
+     * 绘制子菜单转动时的图标
+     *
+     * @param canvas
+     */
+    private void drawCircleIcon(Canvas canvas) {
+
+    }
+
+    /**
+     * 绘制子菜单转动时的轨迹路径
+     *
+     * @param canvas
+     */
+    private void drawCirclePath(Canvas canvas) {
+
+    }
+
+    /**
+     * 绘制子菜单按钮
+     *
+     * @param canvas
+     */
+    private void drawSubMenu(Canvas canvas) {
+
+    }
+
+    /**
+     * 绘制子菜单图标
+     *
+     * @param canvas
+     */
+    private void drawSubmenuIcon(Canvas canvas) {
+
+    }
+
+    /**
+     * 绘制中间开关按钮
+     *
+     * @param canvas
+     */
+    private void drawMainMenu(Canvas canvas) {
+
+    }
+
+    /**
+     * 绘制中间按钮图标
+     *
+     * @param canvas
+     */
+    private void drawMainMenuIcon(Canvas canvas) {
+
+    }
+
+    /**
+     * 绘制按钮阴影
+     * @param canvas
+     * @param centerX
+     * @param centerY
+     * @param radius
+     */
+    private void drawMenuShadow(Canvas canvas, int centerX, int centerY, float radius) {
+
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return super.onTouchEvent(event);
     }
+
+    /**
+     * 更新按钮状态
+     * @param menuIndex
+     * @param isPress
+     */
+    private void updatePressEffect(int menuIndex, boolean isPress){
+
+    }
+
+    /**
+     * 按钮按下时颜色
+     * @param menuIndex
+     * @param depth
+     * @return
+     */
+    private int calcPressEffectColor(int menuIndex, float depth){
+        return 0;
+    }
+
+    /**
+     * 动画透明度
+     * @param color
+     * @param reverse
+     * @return
+     */
+    private int calcAlphaColor(int color, boolean reverse){
+        return 0;
+    }
+
 }
