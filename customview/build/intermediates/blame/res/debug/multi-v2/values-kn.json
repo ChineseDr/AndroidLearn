@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/ray/Desktop/Projects/AndroidStudioProjects/AndroidLearn/customview/build/intermediates/incremental/mergeDebugResources/merged.dir/values-kn/values-kn.xml",
+            "outputFile": "E:\\Projects\\AndroidStudioProjects\\AndroidLearn\\customview\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-kn\\values-kn.xml",
             "map": [
                 {
-                    "source": "/Users/ray/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/3fce8069d14a1abd1646eef1ccf9dfd2/res/values-kn/values-kn.xml",
+                    "source": "C:\\Users\\wangxingyong\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\cc3c178f96c126f749cada4130c04aa1\\res\\values-kn\\values-kn.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "/Users/ray/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/0386840dbfd14215962ac3063780842e/res/values-kn/values-kn.xml",
+                    "source": "C:\\Users\\wangxingyong\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-27.1.1.aar\\51366449293fc1097d9dec5e6197596a\\res\\values-kn\\values-kn.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

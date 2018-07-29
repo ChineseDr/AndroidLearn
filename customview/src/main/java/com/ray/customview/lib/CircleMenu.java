@@ -29,6 +29,12 @@ public class CircleMenu extends View {
 
     private int status;
 
+    private boolean pressed;
+
+    private int rotateAngle;
+    private int centerX;
+    private int centerY;
+
     private Paint oPaint;
     private Paint cPaint;
     private Paint sPaint;
@@ -127,7 +133,9 @@ public class CircleMenu extends View {
      * @param canvas
      */
     private void drawCirclePath(Canvas canvas) {
-
+        canvas.save();
+        canvas.rotate(rotateAngle,centerX,centerY);
+        desPath.reset();
     }
 
     /**
